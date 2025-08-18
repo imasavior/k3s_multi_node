@@ -55,6 +55,8 @@ echo -e "${CYAN}[*] Downloading Flannel YAML...${NC}"
 wget https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 
 sudo apt install -y ansible
+sudo apt install -y tree
+
 echo -e "${BLUE}[*] Waiting 60 seconds for ECK components to start...${NC}"
 sleep 60
 kubectl get po -A
