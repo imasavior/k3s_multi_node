@@ -1,0 +1,113 @@
+apiVersion: logstash.k8s.elastic.co/v1alpha1
+kind: Logstash
+metadata:
+  name: quickstart
+spec:
+  count: 3
+  version: 8.19.2
+  elasticsearchRefs:
+    - name: quickstart
+      clusterName: qs   # 生成 QS_ES_* 環境變數
+
+  # 等同 logstash.yml
+  config:
+    pipeline.workers: 8
+    pipeline.batch.size: 2048
+    pipeline.batch.delay: 1
+    queue.type: memory
+    log.level: info
+    # 開 HTTP API 供探針/觀測用（避免預設 HTTPS 探針失敗）
+    api.enabled: true
+    api.http.host: "0.0.0.0"
+    api.http.port: 9600
+    api.ssl.enabled: false
+
+  pipelines:
+    - pipeline.id: main
+      config.string: |
+        input {                    # 使用內建 generator 壓測
+          generator {
+            id => "gen-1"
+            message => "Hello world!"
+            count => 0
+            threads => 1000
+          }
+          generator {
+            id => "gen-2"
+            message => "Hello world!"
+            count => 0
+            threads => 1000
+          }
+        }
+        filter {
+          mutate { add_field => { "source" => "ls-stress" } }
+        }
+        output {
+          elasticsearch {
+            hosts => [ "${QS_ES_HOSTS}" ]
+            user => "${QS_ES_USER}"
+            password => "${QS_ES_PASSWORD}"
+            ssl_certificate_authorities => "${QS_ES_SSL_CERTIFICATE_AUTHORITY}"
+            # 不指定 index 時，預設為 logstash-%{+YYYY.MM.dd}（符合 ECK 預設權限）
+          }
+        }
+
+  podTemplate:
+    spec:
+      containers:
+      - name: logstash
+        env:
+        - name: LS_JAVA_OPTS
+          value: >-
+            -Xms1g -Xmx1g
+            -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+            -XX:+HeapDumpOnOutOfMemoryError
+            -XX:HeapDumpPath=/var/log/logstash/heapdump.hprof
+            -Djava.io.tmpdir=/tmp/logstash
+            -XX:ErrorFile=/var/log/logstash/hs_err_pid%p.log
+            -Djruby.compile.invokedynamic=true
+            -Djruby.jit.threshold=0
+            -Djruby.regexp.interruptible=true
+            -Dlog4j2.isThreadContextMapInheritable=true
+            -Dls.cgroup.cpuacct.path.override=/
+            -Dls.cgroup.cpu.path.override=/
+            -Djava.awt.headless=true
+            -Dfile.encoding=UTF-8
+            -Djava.security.egd=file:/dev/urandom
+        volumeMounts:
+        - name: tmp-logstash
+          mountPath: /tmp/logstash
+        - name: ls-logs
+          mountPath: /var/log/logstash
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "3Gi"
+          limits:
+            cpu: "2000m"
+            memory: "4Gi"
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /
+            port: 9600
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 12
+      volumes:
+      - name: tmp-logstash
+        emptyDir: {}
+      - name: ls-logs
+        emptyDir: {}
+
+  services:
+    - name: beats
+      service:
+        spec:
+          type: NodePort
+          ports:
+            - name: filebeat
+              port: 5044
+              targetPort: 5044
+              protocol: TCP
