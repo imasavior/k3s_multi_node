@@ -37,7 +37,5 @@ k get po -A -o wide
 sudo nano kube-flannel.yml 
 ```
 修改成10.42..
-```
 k apply -f kube-flannel.yml
-```
 
