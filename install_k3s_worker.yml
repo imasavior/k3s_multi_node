@@ -1,0 +1,42 @@
+---
+- name: Reset and install K3s Agent and Setup PV Folders on Workers
+  hosts: worker
+  become: yes
+  vars:
+    master_host: "{{ groups['master'][0] }}"
+    master_ip: "{{ hostvars[master_host]['ansible_host'] | default(master_host) }}"
+    master_pem: "{{ hostvars[master_host]['ansible_ssh_private_key_file'] }}"
+    k3s_url: "https://{{ master_ip }}:6443"
+    k3s_token: "{{ lookup('pipe', 'ssh -i ' + master_pem + ' ' + ansible_user + '@' + master_ip + ' sudo cat /var/lib/rancher/k3s/server/node-token') }}"
+    node_name_prefix: "vm"
+
+  tasks:
+    - name: Uninstall existing K3s Agent (if exists)
+      shell: |
+        /usr/local/bin/k3s-agent-uninstall.sh || true
+      ignore_errors: true
+
+    - name: Remove existing PV folders if exist
+      file:
+        path: "/home/ubuntu/{{ item }}"
+        state: absent
+      loop:
+        - pv-master
+        - pv-data
+
+    - name: Recreate PV folders
+      file:
+        path: "/home/ubuntu/{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+        group: ubuntu
+      loop:
+        - pv-master
+        - pv-data
+
+    - name: Install K3s Agent
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL={{ k3s_url }} K3S_TOKEN={{ k3s_token }} K3S_NODE_NAME={{ node_name_prefix }}{{ ansible_play_hosts.index(inventory_hostname) }} sh -
+      args:
+        executable: /bin/bash
