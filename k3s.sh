@@ -58,9 +58,25 @@ sudo apt install -y ansible
 mkdir pv-master pv-data
 chmod 775 pv-master pv-data
 
-echo -e "${BLUE}[*] Waiting 60 seconds for ECK components to start...${NC}"
-sleep 60
+# 等待 ECK Operator 啟動
+echo -e "${BLUE}[*] Waiting for ECK Operator pod to become Ready (timeout: 180s)...${NC}"
+
+timeout 180 bash -c '
+  until kubectl get pod -n elastic-system 2>/dev/null | grep eck-operator | grep -q "1/1"; do
+    echo "[*] Waiting for ECK Operator..."
+    sleep 5
+  done
+'
+
+if [ $? -ne 0 ]; then
+  echo -e "${RED}[✘] ECK Operator did not become Ready in time.${NC}"
+  exit 1
+else
+  echo -e "${GREEN}[✔] ECK Operator is Ready.${NC}"
+fi
+
 kubectl get po -A
+
 
 echo -e "${YELLOW}========== Master Token ==========${NC}"
 sudo cat /var/lib/rancher/k3s/server/node-token
