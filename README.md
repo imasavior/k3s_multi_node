@@ -38,6 +38,16 @@ sudo nano kube-flannel.yml
 
 ```
 k apply -f kube-flannel.yml
+#等他跑起來
 ```
+```
+k apply -f kibana.yml
+```
+<img width="993" height="25" alt="截圖 2025-08-21 14 30 39" src="https://github.com/user-attachments/assets/765da19d-2a6f-4e87-897e-8ac27467a802" />
+
+```
+k apply -f logstash.yml
+```
+<img width="864" height="59" alt="截圖 2025-08-21 14 32 30" src="https://github.com/user-attachments/assets/f742f5c8-88a9-4806-9f08-ce9c72f5339b" />
 
 
