@@ -86,7 +86,7 @@ echo -e "${YELLOW}==================================${NC}"
 echo ""
 MASTER_IP=$(hostname -I | awk '{print $1}')
 TOKEN=$(sudo cat /var/lib/rancher/k3s/server/node-token)
-echo -e "${GREEN}🚀 請在其他節點執行以下指令加入 cluster：${NC}"
+echo -e "${GREEN}🚀 （如果要手動加入）請在其他節點執行以下指令加入 cluster：${NC}"
 echo -e "/usr/local/bin/k3s-agent-uninstall.sh"
 echo -e "${CYAN}curl -sfL https://get.k3s.io | K3S_URL=https://${MASTER_IP}:6443 K3S_TOKEN=${TOKEN} K3S_NODE_NAME=vm sh -${NC}"
 source ~/.bashrc
