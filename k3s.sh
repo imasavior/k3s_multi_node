@@ -41,6 +41,13 @@ if ! grep -qxF "$ALIAS_LINE" /home/ubuntu/.bashrc; then
   echo -e "${GREEN}[*] Added alias k=kubectl to .bashrc${NC}"
 fi
 
+# 加入 alias 的自動補全
+COMPLETION_LINE="complete -F __start_kubectl k"
+if ! grep -qxF "$COMPLETION_LINE" /home/ubuntu/.bashrc; then
+  echo "$COMPLETION_LINE" >> /home/ubuntu/.bashrc
+  echo -e "${GREEN}[*] Added autocomplete for alias k${NC}"
+fi
+
 echo -e "${BLUE}[*] Sourcing .bashrc...${NC}"
 source /home/ubuntu/.bashrc
 
