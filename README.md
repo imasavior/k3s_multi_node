@@ -19,7 +19,9 @@ vi host.ini
 ```
 ansible-playbook -i hosts.ini install_k3s_worker.yml
 ```
-k get po -A 會像下面
+```
+k get po -A #會像下面
+```
 <img width="724" height="122" alt="截圖 2025-08-21 13 46 15" src="https://github.com/user-attachments/assets/6b007136-b190-4c16-b1dd-a317e27312d7" />
 ```
 k apply -f pv.yml 
