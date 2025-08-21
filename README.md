@@ -31,10 +31,8 @@ k apply -f elasticsearch.yml
 <img width="1055" height="418" alt="截圖 2025-08-21 13 53 44" src="https://github.com/user-attachments/assets/9608d69e-7394-4103-a4b9-9fcd195c42f2" />
 ```
 k get po -A -o wide
-```
-<img width="993" height="349" alt="截圖 2025-08-21 14 18 19" src="https://github.com/user-attachments/assets/b8955105-ea5a-4017-84df-b22677c8982f" />
-```
 sudo nano kube-flannel.yml
 ```
+<img width="993" height="349" alt="截圖 2025-08-21 14 18 19" src="https://github.com/user-attachments/assets/b8955105-ea5a-4017-84df-b22677c8982f" />
 k apply -f kube-flannel.yml
 
