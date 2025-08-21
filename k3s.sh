@@ -34,6 +34,16 @@ if ! grep -qxF "$KUBE_LINE" /home/ubuntu/.bashrc; then
   echo -e "${GREEN}[*] Added KUBECONFIG to .bashrc${NC}"
 fi
 
+# 安裝 bash-completion
+echo -e "${BLUE}[*] Installing bash-completion...${NC}"
+sudo apt-get install -y bash-completion
+
+# 啟用 kubectl 補全功能
+if ! grep -q "kubectl completion bash" /home/ubuntu/.bashrc; then
+  echo "source <(kubectl completion bash)" >> /home/ubuntu/.bashrc
+  echo -e "${GREEN}[*] Enabled kubectl completion in .bashrc${NC}"
+fi
+
 # 加入 kubectl 簡寫 alias
 ALIAS_LINE="alias k=kubectl"
 if ! grep -qxF "$ALIAS_LINE" /home/ubuntu/.bashrc; then
