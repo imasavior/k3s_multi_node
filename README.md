@@ -2,5 +2,6 @@
 
 ```
 cd k3s_multi_node/
-sudo bash k3s.sh
+sudo bash k3s.sh  #ansible 裝起來有點久
 ```
+
