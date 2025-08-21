@@ -62,6 +62,7 @@ echo -e "${CYAN}[*] Downloading Flannel YAML...${NC}"
 wget https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 
 sudo apt install -y ansible
+rm -rf pv-master pv-data
 mkdir pv-master pv-data
 chmod 775 pv-master pv-data
 
