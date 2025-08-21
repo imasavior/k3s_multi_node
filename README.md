@@ -60,4 +60,17 @@ k apply -f logstash.yml
 
 <img width="864" height="59" alt="截圖 2025-08-21 14 32 30" src="https://github.com/user-attachments/assets/f742f5c8-88a9-4806-9f08-ce9c72f5339b" />
 
+先在本機上映射
+```
+ssh -L 0.0.0.0:5601:localhost:5601 -i Downloads/你的pem ubuntu@202.5.255.
+```
+取得kibana 密碼
+帳號：elastic
+```
+kubectl get secret quickstart-es-elastic-user -o 'go-template={{.data.elastic | base64decode}}'
+```
+執行下面這串 就可以在localhost:5601 看到kibana
 
+```
+kubectl port-forward service/quickstart-kb-http 5601:5601
+```
