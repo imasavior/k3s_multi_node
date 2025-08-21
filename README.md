@@ -32,7 +32,11 @@ k apply -f elasticsearch.yml
 ```
 k get po -A -o wide
 sudo nano kube-flannel.yml
+#改成10.42
 ```
 <img width="993" height="349" alt="截圖 2025-08-21 14 18 19" src="https://github.com/user-attachments/assets/b8955105-ea5a-4017-84df-b22677c8982f" />
+```
 k apply -f kube-flannel.yml
+```
+
 
