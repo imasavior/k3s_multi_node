@@ -67,7 +67,9 @@ mkdir pv-master pv-data
 chmod 775 pv-master pv-data
 
 # 等待 ECK Operator 啟動
-echo -e "${BLUE}[*] Waiting 60 seconds for ECK components to start...${NC}" sleep 60 kubectl get po -A
+echo -e "${BLUE}[*] Waiting 60 seconds for ECK components to start...${NC}" 
+sleep 60 
+kubectl get po -A
 
 
 echo -e "${YELLOW}========== Master Token ==========${NC}"
