@@ -4,4 +4,7 @@
 cd k3s_multi_node/
 sudo bash k3s.sh  #ansible 裝起來有點久
 ```
-source ~/.bashrc  裝完執行
+裝完執行
+```
+source ~/.bashrc  
+```
